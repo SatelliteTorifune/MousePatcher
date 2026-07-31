@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "Jtr4FpoxQAM=",
+  "success": true,
+  "projectFilePath": "C:\\renko\\CSharp\\MousePatcher\\MousePatcher.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\usami\\.nuget\\packages\\lib.harmony\\2.4.2\\lib.harmony.2.4.2.nupkg.sha512",
+    "C:\\Users\\usami\\.nuget\\packages\\starmap.api\\0.3.6\\starmap.api.0.3.6.nupkg.sha512"
+  ],
+  "logs": []
+}

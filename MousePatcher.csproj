@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ModsPath>$(USERPROFILE)\Documents\My Games\Kitten Space Agency\mods\MousePatcher</ModsPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lib.Harmony" Version="2.4.2" />
+    <PackageReference Include="StarMap.API" Version="0.3.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Brutal.Core.Collections">
+      <HintPath>..\..\software\Kitten Space Agency\Brutal.Core.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Brutal.Core.Common">
+      <HintPath>..\..\software\Kitten Space Agency\Brutal.Core.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Brutal.Core.Logging">
+      <HintPath>..\..\software\Kitten Space Agency\Brutal.Core.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Brutal.Core.Maths">
+      <HintPath>..\..\software\Kitten Space Agency\Brutal.Core.Maths.dll</HintPath>
+    </Reference>
+    <Reference Include="Brutal.Core.Numerics">
+      <HintPath>..\..\software\Kitten Space Agency\Brutal.Core.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="Brutal.Core.Strings">
+      <HintPath>..\..\software\Kitten Space Agency\Brutal.Core.Strings.dll</HintPath>
+    </Reference>
+    <Reference Include="Brutal.Glfw">
+      <HintPath>..\..\software\Kitten Space Agency\Brutal.Glfw.dll</HintPath>
+    </Reference>
+    <Reference Include="Brutal.Gltf">
+      <HintPath>..\..\software\Kitten Space Agency\Brutal.Gltf.dll</HintPath>
+    </Reference>
+    <Reference Include="Brutal.Localization">
+      <HintPath>..\..\software\Kitten Space Agency\Brutal.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="KSA">
+      <HintPath>..\..\software\Kitten Space Agency\KSA.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="mod.toml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="CopyToMods" AfterTargets="Build">
+    <MakeDir Directories="$(ModsPath)" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)mod.toml" DestinationFolder="$(ModsPath)" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>
