@@ -78,3 +78,4 @@ C:\renko\CSharp\MousePatcher\obj\Debug\net10.0\MousePatcher.dll
 C:\renko\CSharp\MousePatcher\obj\Debug\net10.0\refint\MousePatcher.dll
 C:\renko\CSharp\MousePatcher\obj\Debug\net10.0\MousePatcher.pdb
 C:\renko\CSharp\MousePatcher\obj\Debug\net10.0\ref\MousePatcher.dll
+C:\renko\CSharp\MousePatcher\obj\Debug\net10.0\MousePatcher.sourcelink.json

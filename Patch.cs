@@ -191,6 +191,8 @@ namespace KSAModding
                 {
                     orbitView.DistancePower *= Math.Pow(1.1, (double)delta.Y * 0.1);
                     orbitView.DistancePower = Math.Clamp(orbitView.DistancePower, 5.0, 100.0);
+                    // 去掉平滑：同步本控制器 DistancePower，使 OnFrame 的 Lerp 立即到位
+                    __instance.DistancePower = orbitView.DistancePower;
                 }
                 __result = true;
                 return false;
@@ -299,6 +301,9 @@ namespace KSAModding
             else
                 orbitView.DistancePower *= 1.1;
             orbitView.DistancePower = Math.Clamp(orbitView.DistancePower, 5.0, 100.0);
+
+            // 去掉平滑：同步本控制器 DistancePower，使 OnFrame 的 Lerp 立即到位
+            __instance.DistancePower = orbitView.DistancePower;
 
             __result = true;
             return false;
@@ -423,6 +428,80 @@ namespace KSAModding
 
             __result = false;
             return false;
+        }
+    }
+
+    /// <summary>
+    /// 飞行界面：把"RMB 点击选择零件"改为"LMB 点击选择零件"。
+    /// 原逻辑（Vehicle.OnMouseButton）：RMB Release 且未拖拽、高亮零件非空时置 PartClicked=true 并消费。
+    /// 现改为 LMB Release 触发选择；RMB 不再选择。
+    /// 与 LMB 相机拖动（MousePatcher_OrbitController 飞行分支）协调：
+    /// 拖拽中（IsMouseDrag）松手放行给相机、不选择零件；点击（未拖拽）才选择。
+    /// </summary>
+    [HarmonyPatch(typeof(Vehicle), nameof(Vehicle.OnMouseButton))]
+    public static class MousePatcher_Vehicle
+    {
+        private static bool Prefix(
+            Vehicle __instance,
+            GlfwWindow window,
+            GlfwMouseButton button,
+            GlfwButtonAction action,
+            GlfwModifier mods,
+            ref bool __result)
+        {
+            // 建造界面不干预
+            if (Program.Editor != null)
+                return true;
+
+            // LMB Release：选择零件（原为 RMB）
+            if (action == GlfwButtonAction.Release && button == GlfwMouseButton.Left)
+            {
+                var controller = Program.HoveredViewport.GetActiveController();
+
+                // 相机拖拽中：放行给 OrbitController 清除拖动，不选择零件
+                if (controller.IsMouseDrag())
+                {
+                    __result = false;
+                    return false;
+                }
+
+                // 未拖拽（点击）：清除悬挂的拖动预备，避免之后移动鼠标误旋转
+                controller.CancelMouseDrag();
+
+                if (__instance.Highlighted != null)
+                {
+                    __instance.Highlighted.PartClicked = true;
+                    __result = true;      // 消费事件
+                    return false;         // 跳过原方法（原 LMB 走 BurnPlan）
+                }
+
+                // 空白：交回原方法（保持 BurnPlan 处理与放行给 OrbitController）
+                return true;
+            }
+
+            // RMB Release：不再触发"选择零件"
+            if (action == GlfwButtonAction.Release && button == GlfwMouseButton.Right)
+            {
+                var controller = Program.HoveredViewport.GetActiveController();
+                if (controller.IsMouseDrag())
+                {
+                    __result = false;
+                    return false;
+                }
+
+                controller.CancelMouseDrag();
+                if (__instance.Highlighted != null)
+                {
+                    // 阻止原 RMB 选择；不消费，放行给后续
+                    __result = false;
+                    return false;
+                }
+
+                // 空白：交回原方法（BurnPlan 等）
+                return true;
+            }
+
+            return true;
         }
     }
 }
